@@ -3,7 +3,7 @@ module powerbi.extensibility.visual {
     //class responsible for drawing nodes and their events
     export class DrawElements {
 
-        public drawingElements(options, newModel: ViewModel, listTeams: TeamModelList, numberOfVisibleLevels): number {
+        public drawingElements(options, newModel: ViewModel, listATeams: TeamModelList, listBTeams: TeamModelList, numberOfVisibleLevels): number {
 
             DataStorage.svg.attr({
                 width: DataStorage.visualWindowWidth,
@@ -72,27 +72,27 @@ module powerbi.extensibility.visual {
                         xCenterCoordinate = predAdd + xCenterCoordinate + xAddValueCoordinate;
                         predAdd = xAddValueCoordinate;
                         oldParent = parent;
-                        let color = calculationsForDrawing.colorDefinitionByCommand(newModel, i, listTeams);
+                        let color = calculationsForDrawing.colorDefinitionByCommand(newModel, i, listATeams);
                         if (DataStorage.shapeType) {
                             this.drawingEllipse(xCenterCoordinate, yCenterCoordinate, heightOfTheShape,
-                                widthOfTheShape, newModel, listTeams, color, i);
+                                widthOfTheShape, newModel, listATeams, color, i);
                         } else {
                             this.drawingRectangle(xCenterCoordinate, yCenterCoordinate, heightOfTheShape,
-                                widthOfTheShape, newModel, listTeams, color, i);
+                                widthOfTheShape, newModel, listATeams, color, i);
                         }
                         if (newModel.dataPoints[i].isHeirs) {
                             this.drawingExpandOrCollapseButton(options, xCenterCoordinate, yCenterCoordinate,
-                                heightOfTheShape, widthOfTheShape, newModel, listTeams,
+                                heightOfTheShape, widthOfTheShape, newModel, listATeams, listBTeams,
                                 color, numberOfVisibleLevels, newModel.dataPoints[i].lvl, i);
                         }
 
                         let offsetValue = DataStorage.distanceBetweenTitleAndSubtitle;
                         this.drawingTitle(xCenterCoordinate, yCenterCoordinate, newModel.dataPoints[i].title,
-                            newModel, i, fontSizeValue, offsetValue, listTeams, numberOfVisibleLevels,
+                            newModel, i, fontSizeValue, offsetValue, listATeams, numberOfVisibleLevels,
                             newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
 
                         this.drawingSubtitle(xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue,
-                            offsetValue, listTeams, numberOfVisibleLevels,
+                            offsetValue, listATeams, numberOfVisibleLevels,
                             newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
 
                         newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
@@ -118,7 +118,8 @@ module powerbi.extensibility.visual {
             heightOfTheShape,
             widthOfTheShape,
             newModel: ViewModel,
-            listTeams: TeamModelList,
+            listATeams: TeamModelList,
+            listBTeams: TeamModelList,
             color,
             numberOfVisibleLevels,
             lvl,
@@ -129,7 +130,7 @@ module powerbi.extensibility.visual {
 
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
             let workWithTeams: WorkWithTeams = new WorkWithTeams();
-            let teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
+            let teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].teamA, listATeams);
             let transparency = 1;
             let isSelectedElements = this.determinationOfBoolSelectionId(newModel);
             if ((DataStorage.isExternalEventClick) || (isSelectedElements)) {
@@ -154,7 +155,7 @@ module powerbi.extensibility.visual {
                 })
                 .on('click', () => {
                     let nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                    this.clickEvent(options, newModel, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
+                    this.clickEvent(options, newModel, nameOfTheParent, listATeams, listBTeams, numberOfVisibleLevels, i);
                 });
 
             DataStorage.nameTextValue = DataStorage.barGroup.append("text")
@@ -170,7 +171,7 @@ module powerbi.extensibility.visual {
 
                 .on('click', () => {
                     let nameOfTheParent = calculationsForDrawing.nameDeterminationByCoordinates(newModel, tempxCenterCoordinate, tempyCenterCoordinate);
-                    this.clickEvent(options, newModel, nameOfTheParent, listTeams, numberOfVisibleLevels, i);
+                    this.clickEvent(options, newModel, nameOfTheParent, listATeams, listBTeams, numberOfVisibleLevels, i);
                 });
             if ((newModel.dataPoints[i].highlighted) || (newModel.dataPoints[i].boolSelectionId)) {
                 DataStorage.rectangle.style("opacity", 1);
@@ -190,7 +191,7 @@ module powerbi.extensibility.visual {
         ) {
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
             let workWithTeams: WorkWithTeams = new WorkWithTeams();
-            let teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
+            let teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].teamA, listTeams);
             let transparency = 1;
             let isSelectedElements = this.determinationOfBoolSelectionId(newModel);
             if ((DataStorage.isExternalEventClick) || (isSelectedElements)) {
@@ -268,7 +269,7 @@ module powerbi.extensibility.visual {
             i
         ) {
             let workWithTeams: WorkWithTeams = new WorkWithTeams();
-            let teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].team, listTeams);
+            let teamId = workWithTeams.joiningPersonsWithTeamId(newModel.dataPoints[i].teamA, listTeams);
             let transparency = 1;
             let isSelectedElements = this.determinationOfBoolSelectionId(newModel);
             let drawControlPanel: DrawControlPanel = new DrawControlPanel();
@@ -282,10 +283,10 @@ module powerbi.extensibility.visual {
                     .selectAll(".id" + newModel.dataPoints[i].id)
                     .style('opacity', 1);
 
-                for (let j = 0; j < listTeams.teamModel.length; j++) {
-                    if (listTeams.teamModel[j].boolSelectionIds) {
+                for (let j = 0; j < listTeams.teamAModel.length; j++) {
+                    if (listTeams.teamAModel[j].boolSelectionIds) {
                         DataStorage.barGroup
-                            .selectAll(".team" + listTeams.teamModel[j].teamId)
+                            .selectAll(".team" + listTeams.teamAModel[j].teamId)
                             .style('opacity', 1);
                     }
                 }
@@ -731,12 +732,12 @@ module powerbi.extensibility.visual {
                     dataString = "";
                 }
 
-                if(newModel.dataPoints[i].team == "Fill" || newModel.dataPoints[i].team == "fill" ||
-                    newModel.dataPoints[i].team == "" || newModel.dataPoints[i].team == null) {
+                if(newModel.dataPoints[i].teamA == "Fill" || newModel.dataPoints[i].teamA == "fill" ||
+                    newModel.dataPoints[i].teamA == "" || newModel.dataPoints[i].teamA == null) {
                     dataString = headersArray[4] + ": " + " ";
                     dataString = "";
                 }else {
-                    dataString = headersArray[4] + ": " + newModel.dataPoints[i].team;
+                    dataString = headersArray[4] + ": " + newModel.dataPoints[i].teamA;
                     this.drawingTooltipText(dataString, xCenterCoordinate, yCenterCoordinate);
                     yCenterCoordinate = yCenterCoordinate + 20;
                     dataString = "";
@@ -912,7 +913,7 @@ module powerbi.extensibility.visual {
         }
 
         //collapsing event (folding / unfolding nodes) (+/- for nodes)
-        public clickEvent(options, newModel: ViewModel, nameOfTheParent, listTeams: TeamModelList, numberOfVisibleLevels, i) {
+        public clickEvent(options, newModel: ViewModel, nameOfTheParent, listATeams: TeamModelList, listBTeams: TeamModelList, numberOfVisibleLevels, i) {
 
             DrawElements.deletingOldShapes();
             DataStorage.scrollLeft = 0;
@@ -935,10 +936,10 @@ module powerbi.extensibility.visual {
             calculationsForDrawing.findVisibleLevels(newModel);
             calculationsForDrawing.countVisibleElemOnEachLevel(newModel);
             newModel = calculationsForDrawing.calcOfWeightCof(newModel);
-            let heightOfTheShape = this.drawingElements(options, newModel, listTeams, numberOfVisibleLevels);
+            let heightOfTheShape = this.drawingElements(options, newModel, listATeams, listBTeams, numberOfVisibleLevels);
             this.drawingRelationships(newModel, heightOfTheShape);
             let drawControlPanel: DrawControlPanel = new DrawControlPanel();
-            drawControlPanel.drawControlPanel(options, newModel, listTeams, heightOfTheShape, numberOfVisibleLevels);
+            drawControlPanel.drawControlPanel(options, newModel, listATeams, listBTeams, heightOfTheShape, numberOfVisibleLevels);
         }
 
         public drawingRelationships(newModel: ViewModel, heightOfTheShape: number) {

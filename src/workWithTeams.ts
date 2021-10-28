@@ -5,8 +5,8 @@ module powerbi.extensibility.visual {
         public joiningCommandsWithColors(modelWithVisibleElements, viewModel: ViewModel) {
             let listTeams = this.countingTheNumberOfTeams(modelWithVisibleElements, viewModel);
 
-            for (let i = 0; i < listTeams.teamModel.length; i++) {
-                listTeams.teamModel[i].color = viewModel.teamSet[listTeams.teamModel[i].team].color;
+            for (let i = 0; i < listTeams.teamAModel.length; i++) {
+                listTeams.teamAModel[i].color = viewModel.teamASet[listTeams.teamAModel[i].team].color;
             }
             return listTeams;
         }
@@ -14,9 +14,9 @@ module powerbi.extensibility.visual {
         //Identify the type id to which the user belongs
         public joiningPersonsWithTeamId(team, teamList: TeamModelList): number {
             let teamId = -1;
-            for (let i = 0; i < teamList.teamModel.length; i++) {
-                if (teamList.teamModel[i].team === team) {
-                    teamId = teamList.teamModel[i].teamId;
+            for (let i = 0; i < teamList.teamAModel.length; i++) {
+                if (teamList.teamAModel[i].team === team) {
+                    teamId = teamList.teamAModel[i].teamId;
                     break;
                 }
             }
@@ -26,33 +26,34 @@ module powerbi.extensibility.visual {
         //counting the number of teams
         public countingTheNumberOfTeams(newModel: ViewModel, previousModel: ViewModel): TeamModelList {
             let teamModelList: TeamModelList = {
-                teamModel: []
+                teamAModel: [],
+                teamBModel: []
             };
             let counter = 0;
             let isUniqueTeam;
             for (let i = 0; i < newModel.dataPoints.length; i++) {
                 isUniqueTeam = true;
-                if ((newModel.dataPoints[i].team == " ") || (newModel.dataPoints[i].team == null)) {
-                    newModel.dataPoints[i].team = "";
+                if ((newModel.dataPoints[i].teamA == " ") || (newModel.dataPoints[i].teamA == null)) {
+                    newModel.dataPoints[i].teamA = "";
                 }
-                for (let j = 0; j < teamModelList.teamModel.length; j++) {
-                    if (newModel.dataPoints[i].team === teamModelList.teamModel[j].team) {
+                for (let j = 0; j < teamModelList.teamAModel.length; j++) {
+                    if (newModel.dataPoints[i].teamA === teamModelList.teamAModel[j].team) {
                         isUniqueTeam = false;
                         break;
                     }
                 }
                 if (isUniqueTeam) {
-                    const teamName: string = newModel.dataPoints[i].team;
+                    const teamName: string = newModel.dataPoints[i].teamA;
 
                     let team: TeamModel = {
-                        team: newModel.dataPoints[i].team,
+                        team: newModel.dataPoints[i].teamA,
                         color: "yellow",
                         teamId: counter,
                         boolSelectionIds: false,
-                        selectionIds: previousModel.teamSet[teamName].selectionIds || []
+                        selectionIds: previousModel.teamASet[teamName].selectionIds || []
                     };
                     counter++;
-                    teamModelList.teamModel.push(team);
+                    teamModelList.teamAModel.push(team);
                 }
             }
             return teamModelList;

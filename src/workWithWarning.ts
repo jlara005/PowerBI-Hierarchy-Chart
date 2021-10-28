@@ -6,7 +6,8 @@ module powerbi.extensibility.visual {
             DataStorage.isWarning = true;
             let modelProblemElements: ViewModel = {
                 dataPoints: [],
-                teamSet: {},
+                teamASet: {},
+                teamBSet: {},
                 highlights: false
             };
             modelProblemElements = this.searchForErroneousElements(viewModel, modelWithLevels, modelProblemElements);

@@ -12,8 +12,10 @@ module powerbi.extensibility.visual {
         xCoordinate: number;
         yCoordinate: number;
         isVisible: boolean;
-        team: string;
-        teamId: number;
+        teamA: string;
+        teamAId: number;
+        teamB: string;
+        teamBId: number;
         position: string;
         isHeirs: boolean;
         selectionId: powerbi.visuals.ISelectionId;
@@ -27,7 +29,8 @@ module powerbi.extensibility.visual {
 
     export interface ViewModel {
         dataPoints: DataPoint[];
-        teamSet?: TeamModelSet;
+        teamASet?: TeamModelSet;
+        teamBSet?: TeamModelSet;
         highlights: boolean;
     };
 
@@ -44,14 +47,16 @@ module powerbi.extensibility.visual {
     };
 
     export interface TeamModelList {
-        teamModel: TeamModel[];
+        teamAModel: TeamModel[];
+        teamBModel: TeamModel[];
     };
 
     export interface ColumnIndex {
         category?: number;
         title?: number;
         reportTo?: number;
-        team?: number;
+        teamA?: number;
+        teamB?: number;
         position?: number;
         tooltip?: number;
     }

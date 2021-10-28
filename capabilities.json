@@ -22,8 +22,13 @@
             "kind": "Grouping"
         },
         {
-            "displayName": "Type",
-            "name": "team",
+            "displayName": "Fill Type",
+            "name": "teamA",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Border Type",
+            "name": "teamB",
             "kind": "Grouping"
         },
         {
@@ -57,7 +62,15 @@
                         "min": 0,
                         "max": 1
                     },
-                    "team": {
+                    "teamA": {
+                        "min": 0,
+                        "max": 1
+                    },
+                    "teamB": {
+                        "min": 0,
+                        "max": 1
+                    },
+                    "border": {
                         "min": 0,
                         "max": 1
                     },
@@ -96,7 +109,17 @@
                         },
                         {
                             "bind": {
-                                "to": "team"
+                                "to": "teamA"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "teamB"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "border"
                             }
                         },
                         {
@@ -147,8 +170,23 @@
                 }
             }
         },
-        "teams": {
-            "displayName": "Type Colors",
+        "teamsA": {
+            "displayName": "Fill Type Colors",
+            "properties": {
+                "fill": {
+                    "displayName": "Fill",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "teamsB": {
+            "displayName": "Border Type Colors",
             "properties": {
                 "fill": {
                     "displayName": "Fill",

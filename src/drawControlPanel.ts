@@ -8,32 +8,33 @@ module powerbi.extensibility.visual {
         public drawControlPanel(
             options: VisualUpdateOptions,
             newModel: ViewModel,
-            listTeams: TeamModelList,
+            listATeams: TeamModelList,
+            listBTeams: TeamModelList,
             heightOfTheShape,
             numberOfVisibleLevels
         ) {
-            this.resetSelectedItems(options, newModel, listTeams);
+            this.resetSelectedItems(options, newModel, listATeams);
             if ((DataStorage.isControls) && (options.viewport.height > 130) && (!DataStorage.criticalError)) {
-                this.drawingControlButtons(options, heightOfTheShape, newModel, numberOfVisibleLevels, listTeams);
+                this.drawingControlButtons(options, heightOfTheShape, newModel, numberOfVisibleLevels, listATeams, listBTeams);
             }
             if ((DataStorage.showLegend) && (!DataStorage.criticalError)) {
                 if (DataStorage.legend == "0") {
-                    this.drawingMarks(listTeams, true, newModel);
+                    this.drawingMarks(listATeams, true, newModel);
                     if (DrawControlPanel.displayScroll) {
-                        this.scrollButtonLeft(listTeams, true, newModel);
-                        this.scrollButtonRight(listTeams, true, newModel);
+                        this.scrollButtonLeft(listATeams, true, newModel);
+                        this.scrollButtonRight(listATeams, true, newModel);
                     }
                 }
                 if (DataStorage.legend == "1") {
 
-                    this.drawingMarks(listTeams, false, newModel);
+                    this.drawingMarks(listATeams, false, newModel);
                     if (DrawControlPanel.displayScroll) {
-                        this.scrollButtonLeft(listTeams, false, newModel);
-                        this.scrollButtonRight(listTeams, false, newModel);
+                        this.scrollButtonLeft(listATeams, false, newModel);
+                        this.scrollButtonRight(listATeams, false, newModel);
                     }
                 }
                 if (DataStorage.legend == "2") {
-                    this.drawingMarksAuto(listTeams, heightOfTheShape, newModel);
+                    this.drawingMarksAuto(listATeams, heightOfTheShape, newModel);
                 }
             }
             if ((DataStorage.showWarning) && (DataStorage.isWarning)) {
@@ -47,7 +48,8 @@ module powerbi.extensibility.visual {
             heightOfTheShape,
             newModel: ViewModel,
             numberOfVisibleLevels,
-            listTeams: TeamModelList
+            listATeams: TeamModelList,
+            listBTeams: TeamModelList
         ) {
             let xButtonCoordinateAdd = newModel.dataPoints[0].xCoordinate - DataStorage.widthOfTheShape / 1.1;
             let xButtonCoordinateMinus = newModel.dataPoints[0].xCoordinate + DataStorage.widthOfTheShape / 1.1;
@@ -56,8 +58,8 @@ module powerbi.extensibility.visual {
                 heightOfTheShape = DataStorage.customShapeHeight;
             }
             let yButtonCoordinate = newModel.dataPoints[0].yCoordinate - heightOfTheShape / 1.2;
-            this.drowingButton(options, yButtonCoordinate, xButtonCoordinateAdd, newModel, numberOfVisibleLevels, listTeams, true, "+");
-            this.drowingButton(options, yButtonCoordinate, xButtonCoordinateMinus, newModel, numberOfVisibleLevels, listTeams, false, "-");
+            this.drowingButton(options, yButtonCoordinate, xButtonCoordinateAdd, newModel, numberOfVisibleLevels, listATeams, listBTeams, true, "+");
+            this.drowingButton(options, yButtonCoordinate, xButtonCoordinateMinus, newModel, numberOfVisibleLevels, listATeams, listBTeams, false, "-");
         }
 
         public drowingButton(
@@ -66,7 +68,8 @@ module powerbi.extensibility.visual {
             xCoordinate,
             newModel: ViewModel,
             numberOfVisibleLevels,
-            listTeams: TeamModelList,
+            listATeams: TeamModelList,
+            listBTeams: TeamModelList,
             isChangeLevel,
             sign
         ) {
@@ -84,11 +87,11 @@ module powerbi.extensibility.visual {
                 }).style("font-size", 40 + "px")
                 .style("text-align", "left")
                 .on('click', () => {
-                    this.clickButtonEvent(options, newModel, numberOfVisibleLevels, listTeams, isChangeLevel);
+                    this.clickButtonEvent(options, newModel, numberOfVisibleLevels, listATeams, listBTeams, isChangeLevel);
                 })
         }
 
-        public clickButtonEvent(options, newModel: ViewModel, numberOfVisibleLevels, listTeams: TeamModelList, isChangeLevel) {
+        public clickButtonEvent(options, newModel: ViewModel, numberOfVisibleLevels, listATeams: TeamModelList, listBTeams: TeamModelList, isChangeLevel) {
             DrawElements.deletingOldShapes();
             if (isChangeLevel) {
                 if (numberOfVisibleLevels < DataStorage.numbOfLevels - 1) {
@@ -108,9 +111,9 @@ module powerbi.extensibility.visual {
             calculationsForDrawing.findVisibleLevels(modelWithVisibleElements);
             calculationsForDrawing.countVisibleElemOnEachLevel(modelWithVisibleElements);
             modelWithVisibleElements = calculationsForDrawing.calcOfWeightCof(modelWithVisibleElements);
-            let heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listTeams, numberOfVisibleLevels);
+            let heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listATeams, listBTeams, numberOfVisibleLevels);
             drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
-            this.drawControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
+            this.drawControlPanel(options, modelWithVisibleElements, listATeams, listBTeams, heightOfTheShape, numberOfVisibleLevels);
         }
 
         public scrollButtonLeft(listTeams, isBottom, newModel) {
@@ -169,7 +172,7 @@ module powerbi.extensibility.visual {
                 .style("font-weight", "bold")
                 .attr("d", image)
                 .on('click', () => {
-                    if (DataStorage.scrollRight < listTeams.teamModel.length) {
+                    if (DataStorage.scrollRight < listTeams.teamAModel.length) {
                         DataStorage.scrollRight++;
                         DataStorage.scrollLeft++;
                         this.clickOnLegendBtnScroll(isBottom, listTeams, newModel);
@@ -180,7 +183,7 @@ module powerbi.extensibility.visual {
         //drawing of a legend in automatic mode
         public drawingMarksAuto(listTeams: TeamModelList, heightOfTheShape, newModel) {
 
-            let radius = heightOfTheShape / (listTeams.teamModel.length * 1.5);
+            let radius = heightOfTheShape / (listTeams.teamAModel.length * 1.5);
             let widthWindow = DataStorage.visualWindowWidth;
             let xCircleCoordinate = radius * 1.2;
             let yCircleCoordinate = radius * 1.5;
@@ -189,11 +192,11 @@ module powerbi.extensibility.visual {
                 yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + 40;
                 yCircleCoordinate = yCircleCoordinate + 40;
             }
-            for (let i = 0; i < listTeams.teamModel.length; i++) {
-                if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
+            for (let i = 0; i < listTeams.teamAModel.length; i++) {
+                if ((listTeams.teamAModel[i].team != null) && (listTeams.teamAModel[i].team != " ") && (listTeams.teamAModel[i].team != "")) {
 
-                    let color = listTeams.teamModel[i].color;
-                    if (i < (listTeams.teamModel.length / 2)) {
+                    let color = listTeams.teamAModel[i].color;
+                    if (i < (listTeams.teamAModel.length / 2)) {
                         this.drawingColorMarks(xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                         this.drawingTextMarksAuto(xCircleCoordinate + radius * 2, yCircleCoordinate, listTeams, true, i, newModel);
                         yCircleCoordinate = yCircleCoordinate + radius * 2.5;
@@ -231,16 +234,16 @@ module powerbi.extensibility.visual {
             DrawControlPanel.displayScroll = false;
             for (let i = DataStorage.scrollLeft; i < DataStorage.scrollRight; i++) {
 
-                if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
-                    let color = listTeams.teamModel[i].color;
-                    if (i < listTeams.teamModel.length) {
+                if ((listTeams.teamAModel[i].team != null) && (listTeams.teamAModel[i].team != " ") && (listTeams.teamAModel[i].team != "")) {
+                    let color = listTeams.teamAModel[i].color;
+                    if (i < listTeams.teamAModel.length) {
                         this.drawingColorMarks(xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                         xCoordinate = xCoordinate + radius * 2;
-                        let team = listTeams.teamModel[i].team.toString();
+                        let team = listTeams.teamAModel[i].team.toString();
                         this.drawingTextMarks(xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
                         xCoordinate = xCoordinate + team.length * 4 * DataStorage.fontLegendSize / 5 + 7;
                     }
-                    if ((xCoordinate < DataStorage.visualWindowWidth - 50) && (DataStorage.scrollRight < listTeams.teamModel.length)) {
+                    if ((xCoordinate < DataStorage.visualWindowWidth - 50) && (DataStorage.scrollRight < listTeams.teamAModel.length)) {
 
                         DataStorage.scrollRight++;
                     }
@@ -249,7 +252,7 @@ module powerbi.extensibility.visual {
                     }
                 }
                 else {
-                    if ((xCoordinate < DataStorage.visualWindowWidth - 50) && (DataStorage.scrollRight < listTeams.teamModel.length)) {
+                    if ((xCoordinate < DataStorage.visualWindowWidth - 50) && (DataStorage.scrollRight < listTeams.teamAModel.length)) {
                         DataStorage.scrollRight++;
                     }
                 }
@@ -261,7 +264,7 @@ module powerbi.extensibility.visual {
         public drawingColorMarks(xCircleCoordinate, yCircleCoordinate, radius, color, listTeams: TeamModelList, i, newModel) {
 
             DataStorage.circle = DataStorage.barGroup.append("circle")
-                .classed('circle', true).classed("team" + listTeams.teamModel[i].teamId, true).classed("controlPanel", true);
+                .classed('circle', true).classed("team" + listTeams.teamAModel[i].teamId, true).classed("controlPanel", true);
 
             DataStorage.circle
                 .style("fill", color)
@@ -283,8 +286,8 @@ module powerbi.extensibility.visual {
 
         public determinationOfBoolSelectionIdTeam(listTeams: TeamModelList) {
             let isSelectedTeam = false;
-            for (let i = 0; i < listTeams.teamModel.length; i++) {
-                if (listTeams.teamModel[i].boolSelectionIds) {
+            for (let i = 0; i < listTeams.teamAModel.length; i++) {
+                if (listTeams.teamAModel[i].boolSelectionIds) {
                     isSelectedTeam = true;
                     break;
                 }
@@ -339,7 +342,7 @@ module powerbi.extensibility.visual {
                 .classed("nameTextValue", true);
 
             DataStorage.nameTextValue
-                .text(listTeams.teamModel[i].team)
+                .text(listTeams.teamAModel[i].team)
                 .attr({
                     x: xCircleCoordinate,
                     y: yCircleCoordinate,

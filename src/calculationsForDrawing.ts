@@ -75,9 +75,9 @@ module powerbi.extensibility.visual {
     //Determine the color of the element by grounds of belonging to a team
     public colorDefinitionByCommand(newModel: ViewModel, index, listTeams: TeamModelList): string {
         let color;
-        for (let i = 0; i < listTeams.teamModel.length; i++) {
-            if (newModel.dataPoints[index].team === listTeams.teamModel[i].team) {
-                color = listTeams.teamModel[i].color;
+        for (let i = 0; i < listTeams.teamAModel.length; i++) {
+            if (newModel.dataPoints[index].teamA === listTeams.teamAModel[i].team) {
+                color = listTeams.teamAModel[i].color;
             }
         }
         return color;
@@ -225,11 +225,13 @@ module powerbi.extensibility.visual {
             xCoordinate: 0,
             yCoordinate: 0,
             isVisible: false,
-            team: "",
+            teamA: "",
+            teamB: "",
             position: "",
             selectionId: undefined,
             boolSelectionId: false,
-            teamId: 0,
+            teamAId: 0,
+            teamBId: 0,
             highlighted: false,
             isHeirs: false,
             elementWeight: 0,
@@ -240,13 +242,15 @@ module powerbi.extensibility.visual {
         let cashPoint: DataPoint;
         let sortModel: ViewModel = {
             dataPoints: [],
-            teamSet: {},
+            teamASet: {},
+            teamBSet: {},
             highlights: false
         };
         let _lvl: number = 0;
         let newViewModel: ViewModel = {
             dataPoints: [],
-            teamSet: {},
+            teamASet: {},
+            teamBSet: {},
             highlights: false
         };
 

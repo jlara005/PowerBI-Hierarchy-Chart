@@ -12,8 +12,13 @@ module powerbi.extensibility.visual {
         private settings: VisualSettings;
         private viewModel: ViewModel;
 
-        private static TeamsColorIdentifier: DataViewObjectPropertyIdentifier = {
-            objectName: "teams",
+        private static TeamsAColorIdentifier: DataViewObjectPropertyIdentifier = {
+            objectName: "teamsA",
+            propertyName: "fill"
+        };
+
+        private static TeamsBColorIdentifier: DataViewObjectPropertyIdentifier = {
+            objectName: "teamsB",
             propertyName: "fill"
         };
 
@@ -127,7 +132,8 @@ module powerbi.extensibility.visual {
             calculationsForDrawing.findVisibleLevels(modelWithVisibleElements);
             calculationsForDrawing.countVisibleElemOnEachLevel(modelWithVisibleElements);
 
-            let listTeams = workWithTeams.joiningCommandsWithColors(modelWithVisibleElements, viewModel);
+            let listATeams = workWithTeams.joiningCommandsWithColors(modelWithVisibleElements, viewModel);
+            let listBTeams;
 
             modelWithVisibleElements = calculationsForDrawing.calcOfWeightCof(modelWithVisibleElements);
 
@@ -154,10 +160,10 @@ module powerbi.extensibility.visual {
             let heightOfTheShape = 0;
 
             if ((options.viewport.height > minWindowHeight) && (!DataStorage.criticalError)) {
-                heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listTeams, numberOfVisibleLevels);
+                heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listATeams, listBTeams, numberOfVisibleLevels);
                 drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
             }
-            drawControlPanel.drawControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
+            drawControlPanel.drawControlPanel(options, modelWithVisibleElements, listATeams, listBTeams, heightOfTheShape, numberOfVisibleLevels);
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
@@ -166,28 +172,54 @@ module powerbi.extensibility.visual {
 
             const instances = VisualSettings.enumerateObjectInstances(settings, options);
 
-            if (options.objectName === HierarchyChartByAkvelon.TeamsColorIdentifier.objectName) {
-                this.enumerateTeams(instances, options.objectName);
+            if (options.objectName === HierarchyChartByAkvelon.TeamsAColorIdentifier.objectName) {
+                this.enumerateATeams(instances, options.objectName);
             }
+            if (options.objectName === HierarchyChartByAkvelon.TeamsBColorIdentifier.objectName) {
+                this.enumerateBTeams(instances, options.objectName);
+            }
+
             return instances;
         }
 
-        private enumerateTeams(instanceEnumeration: VisualObjectInstanceEnumeration, objectName: string): void {
-            const teams: string[] = this.viewModel && this.viewModel.teamSet && Object.keys(this.viewModel.teamSet) || [];
+        private enumerateATeams(instanceEnumeration: VisualObjectInstanceEnumeration, objectName: string): void {
+            const teams: string[] = this.viewModel && this.viewModel.teamASet && Object.keys(this.viewModel.teamASet) || [];
 
             if (!teams || !(teams.length > 0)) {
                 return;
             }
             teams.forEach((teamName: string) => {
-                const identity: ISelectionId = this.viewModel.teamSet[teamName].selectionIds[0] as ISelectionId,
-                    displayName: string = this.viewModel.teamSet[teamName].team;
+                const identity: ISelectionId = this.viewModel.teamASet[teamName].selectionIds[0] as ISelectionId,
+                    displayName: string = this.viewModel.teamASet[teamName].team;
 
                 this.addAnInstanceToEnumeration(instanceEnumeration, {
                     displayName,
                     objectName,
                     selector: ColorHelper.normalizeSelector(identity.getSelector(), false),
                     properties: {
-                        fill: { solid: { color: this.viewModel.teamSet[teamName].color } }
+                        fill: { solid: { color: this.viewModel.teamASet[teamName].color } }
+                    }
+                });
+            });
+        }
+
+        
+        private enumerateBTeams(instanceEnumeration: VisualObjectInstanceEnumeration, objectName: string): void {
+            const teams: string[] = this.viewModel && this.viewModel.teamBSet && Object.keys(this.viewModel.teamBSet) || [];
+
+            if (!teams || !(teams.length > 0)) {
+                return;
+            }
+            teams.forEach((teamName: string) => {
+                const identity: ISelectionId = this.viewModel.teamBSet[teamName].selectionIds[0] as ISelectionId,
+                    displayName: string = this.viewModel.teamBSet[teamName].team;
+
+                this.addAnInstanceToEnumeration(instanceEnumeration, {
+                    displayName,
+                    objectName,
+                    selector: ColorHelper.normalizeSelector(identity.getSelector(), false),
+                    properties: {
+                        fill: { solid: { color: this.viewModel.teamBSet[teamName].color } }
                     }
                 });
             });
@@ -225,7 +257,8 @@ module powerbi.extensibility.visual {
 
             let viewModel: ViewModel = {
                 dataPoints: [],
-                teamSet: {},
+                teamASet: {},
+                teamBSet: {},
                 highlights: false
             };
 
@@ -243,7 +276,8 @@ module powerbi.extensibility.visual {
                 category: -1,
                 title: -1,
                 reportTo: -1,
-                team: -1,
+                teamA: -1,
+                teamB: -1,
                 position: -1,
                 tooltip: -1,
             };
@@ -273,12 +307,12 @@ module powerbi.extensibility.visual {
                 const xCoordinate: number = 0 as number;
                 const yCoordinate: number = 0 as number;
                 const isVisible: boolean = false as boolean;
-                let team: string = "" as string;
+                let teamA: string = "" as string;
+                let teamB: string = "" as string;
                 let position: string = "" as string;
-
                 let tooltip: string = "" as string;
-
-                const teamId: number = 0 as number;
+                const teamAId: number = 0 as number;
+                const teamBId: number = 0 as number;
                 const boolSelectionIds: boolean = false as boolean;
                 const isHeirs: boolean = false as boolean;
                 const elementWeight: number = 0 as number;
@@ -290,16 +324,27 @@ module powerbi.extensibility.visual {
                 const boolSelectionId: boolean = false as boolean;
                 if (categories[columnIndexes.position]) {
                     position = categories[columnIndexes.position].values[dataPointIndex] as string;
-                } else {
+                } 
+                else {
                     position = "";
                 }
-                if (categories[columnIndexes.team]) {
-                    team = categories[columnIndexes.team].values[dataPointIndex] as string;
+
+                if (categories[columnIndexes.teamA]) {
+                    teamA = categories[columnIndexes.teamA].values[dataPointIndex] as string;
                 } else {
-                    team = "";
+                    teamA = "";
                 }
-                if (((team == " ") || (team == null) || (team == "")) && (columnIndexes.team != -1)) {
-                    team = "Fill";
+                if (((teamA == " ") || (teamA == null) || (teamA == "")) && (columnIndexes.teamA != -1)) {
+                    teamA = "Fill";
+                }
+
+                if (categories[columnIndexes.teamB]) {
+                    teamB = categories[columnIndexes.teamB].values[dataPointIndex] as string;
+                } else {
+                    teamB = "";
+                }
+                if (((teamB == " ") || (teamB == null) || (teamB == "")) && (columnIndexes.teamB != -1)) {
+                    teamB = "Fill";
                 }
 
                 // for tooltip
@@ -309,23 +354,42 @@ module powerbi.extensibility.visual {
                     tooltip = "";
                 }
 
-                if (!viewModel.teamSet[team]) {
+                if (!viewModel.teamASet[teamA]) {
                     const color: string = this.getColor(
-                        HierarchyChartByAkvelon.TeamsColorIdentifier,
+                        HierarchyChartByAkvelon.TeamsAColorIdentifier,
                         DataStorage.defaultColor,
                         categories[columnIndexes.category].objects
                         && categories[columnIndexes.category].objects[dataPointIndex]
                         || {});
 
-                    viewModel.teamSet[team] = {
-                        team,
+                    viewModel.teamASet[teamA] = {
+                        team : teamA,
                         selectionIds: [selectionId],
                         color,
-                        teamId,
+                        teamId: teamAId,
                         boolSelectionIds
                     }
                 } else {
-                    viewModel.teamSet[team].selectionIds.push(selectionId);
+                    viewModel.teamASet[teamA].selectionIds.push(selectionId);
+                }
+
+                if (!viewModel.teamBSet[teamB]) {
+                    const color: string = this.getColor(
+                        HierarchyChartByAkvelon.TeamsBColorIdentifier,
+                        DataStorage.defaultColor,
+                        categories[columnIndexes.category].objects
+                        && categories[columnIndexes.category].objects[dataPointIndex]
+                        || {});
+
+                    viewModel.teamBSet[teamB] = {
+                        team : teamB,
+                        selectionIds: [selectionId],
+                        color,
+                        teamId: teamBId,
+                        boolSelectionIds
+                    }
+                } else {
+                    viewModel.teamBSet[teamB].selectionIds.push(selectionId);
                 }
 
                 viewModel.dataPoints.push({
@@ -336,17 +400,19 @@ module powerbi.extensibility.visual {
                     xCoordinate,
                     yCoordinate,
                     isVisible,
-                    team,
+                    teamA,
                     position,
                     selectionId,
                     boolSelectionId,
-                    teamId,
+                    teamAId,
                     highlighted,
                     isHeirs,
                     elementWeight,
                     parentStartX,
                     nameOfHeader,
-                    tooltip
+                    tooltip,
+                    teamB,
+                    teamBId
                 });
             }
             viewModel.highlights = viewModel.dataPoints.filter(d => d.highlighted).length > 0;
