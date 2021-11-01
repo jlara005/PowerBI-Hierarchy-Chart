@@ -132,8 +132,7 @@ module powerbi.extensibility.visual {
             calculationsForDrawing.findVisibleLevels(modelWithVisibleElements);
             calculationsForDrawing.countVisibleElemOnEachLevel(modelWithVisibleElements);
 
-            let listATeams = workWithTeams.joiningCommandsWithColors(modelWithVisibleElements, viewModel);
-            let listBTeams;
+            let listTeams = workWithTeams.joiningCommandsWithColors(modelWithVisibleElements, viewModel);
 
             modelWithVisibleElements = calculationsForDrawing.calcOfWeightCof(modelWithVisibleElements);
 
@@ -160,10 +159,10 @@ module powerbi.extensibility.visual {
             let heightOfTheShape = 0;
 
             if ((options.viewport.height > minWindowHeight) && (!DataStorage.criticalError)) {
-                heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listATeams, listBTeams, numberOfVisibleLevels);
+                heightOfTheShape = drawElements.drawingElements(options, modelWithVisibleElements, listTeams, numberOfVisibleLevels);
                 drawElements.drawingRelationships(modelWithVisibleElements, heightOfTheShape);
             }
-            drawControlPanel.drawControlPanel(options, modelWithVisibleElements, listATeams, listBTeams, heightOfTheShape, numberOfVisibleLevels);
+            drawControlPanel.drawControlPanel(options, modelWithVisibleElements, listTeams, heightOfTheShape, numberOfVisibleLevels);
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
