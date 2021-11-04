@@ -73,7 +73,6 @@ module powerbi.extensibility.visual {
                         predAdd = xAddValueCoordinate;
                         oldParent = parent;
                         let colors = calculationsForDrawing.colorDefinitionByCommand(newModel, i, listTeams);
-
                         if (DataStorage.shapeType) {
                             this.drawingEllipse(xCenterCoordinate, yCenterCoordinate, heightOfTheShape,
                                 widthOfTheShape, newModel, listTeams, colors[0], i);

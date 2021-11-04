@@ -377,19 +377,19 @@ module powerbi.extensibility.visual {
         //click events on any element of the legend withOut Ctrl
         public selectSingleEvent(i, listTeams, newModel){
             DataStorage.selectionManager.clear();
-            if (listTeams.teamModel[i].boolSelectionIds) {
-                listTeams.teamModel[i].boolSelectionIds = false;
+            if (listTeams.teamAModel[i].boolSelectionIds) {
+                listTeams.teamAModel[i].boolSelectionIds = false;
                 this.resetAllSelectedItems(listTeams, newModel);
                 this.changeVisiblElements(1);
             } else {
                 this.resetAllSelectedItems(listTeams, newModel);
-                listTeams.teamModel[i].boolSelectionIds = true;
+                listTeams.teamAModel[i].boolSelectionIds = true;
                 this.changeVisiblElements(0.5);
-                listTeams.teamModel[i].selectionIds.forEach((selectionId) => {
+                listTeams.teamAModel[i].selectionIds.forEach((selectionId) => {
                     DataStorage.selectionManager.select(selectionId, true);
                 });
                 DataStorage.barGroup
-                .selectAll(".team" + listTeams.teamModel[i].teamId)
+                .selectAll(".team" + listTeams.teamAModel[i].teamId)
                 .style('opacity', 1);
             }
             DataStorage.makeSingleEvent = true;
@@ -402,19 +402,19 @@ module powerbi.extensibility.visual {
                 this.resetAllSelectedItems(listTeams, newModel);
             }
             DataStorage.makeSingleEvent = false;
-            if (listTeams.teamModel[i].boolSelectionIds) {
-                listTeams.teamModel[i].boolSelectionIds = false;
+            if (listTeams.teamAModel[i].boolSelectionIds) {
+                listTeams.teamAModel[i].boolSelectionIds = false;
             } else {
-                listTeams.teamModel[i].boolSelectionIds = true;
+                listTeams.teamAModel[i].boolSelectionIds = true;
             }
             let drawElements: DrawElements = new DrawElements();
             if ((this.determinationOfBoolSelectionIdTeam(listTeams))|| drawElements.determinationOfBoolSelectionId(newModel)) {
 
                 this.changeVisiblElements(0.5);
-                for (let j = 0; j < listTeams.teamModel.length; j++) {
-                    if (listTeams.teamModel[j].boolSelectionIds) {
+                for (let j = 0; j < listTeams.teamAModel.length; j++) {
+                    if (listTeams.teamAModel[j].boolSelectionIds) {
                         DataStorage.barGroup
-                            .selectAll(".team" + listTeams.teamModel[j].teamId)
+                            .selectAll(".team" + listTeams.teamAModel[j].teamId)
                             .style('opacity', 1);
                     }
                 }
@@ -425,7 +425,7 @@ module powerbi.extensibility.visual {
                         .style('opacity', 1);
                     }
                 }
-                listTeams.teamModel[i].selectionIds.forEach((selectionId) => {
+                listTeams.teamAModel[i].selectionIds.forEach((selectionId) => {
                     DataStorage.selectionManager.select(selectionId, true);
                 });
             } else {
@@ -456,12 +456,12 @@ module powerbi.extensibility.visual {
                 yCircleCoordinate = yCircleCoordinate + 40;
             }
             for (let i = DataStorage.scrollLeft; i < DataStorage.scrollRight; i++) {
-                if ((listTeams.teamModel[i].team != null) && (listTeams.teamModel[i].team != " ") && (listTeams.teamModel[i].team != "")) {
-                    let color = listTeams.teamModel[i].color;
-                    if (i < listTeams.teamModel.length) {
+                if ((listTeams.teamAModel[i].team != null) && (listTeams.teamAModel[i].team != " ") && (listTeams.teamAModel[i].team != "")) {
+                    let color = listTeams.teamAModel[i].color;
+                    if (i < listTeams.teamAModel.length) {
                         this.drawingColorMarks(xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
                         xCoordinate = xCoordinate + radius * 2;
-                        let team = listTeams.teamModel[i].team.toString();
+                        let team = listTeams.teamAModel[i].team.toString();
                         this.drawingTextMarks(xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
                         xCoordinate = xCoordinate + team.length * 4 * DataStorage.fontLegendSize / 5 + 7;
                     }
@@ -481,8 +481,8 @@ module powerbi.extensibility.visual {
 
 
         public resetAllSelectedItems(listTeams, newModel){
-            for (let j = 0; j < listTeams.teamModel.length; j++) {
-                listTeams.teamModel[j].boolSelectionIds = false;
+            for (let j = 0; j < listTeams.teamAModel.length; j++) {
+                listTeams.teamAModel[j].boolSelectionIds = false;
             }
             for (let i = 0; i < newModel.dataPoints.length; i++) {
                 newModel.dataPoints[i].boolSelectionId = false;

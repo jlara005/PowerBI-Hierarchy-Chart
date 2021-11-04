@@ -43,7 +43,8 @@ module powerbi.extensibility.visual {
             else if (firstObject.id < secondObject.id) return -1;
             else return 0;
         }
-
+        
+        @logExceptions()
         public update(options: VisualUpdateOptions) {
             DataStorage.scrollLeft = 0;
             DataStorage.scrollRight = 1;
@@ -74,7 +75,6 @@ module powerbi.extensibility.visual {
             const warning = this.settings.warning;
             const tooltip = this.settings.tooltip;
             const wrap = this.settings.wrap;
-
 
             DataStorage.colorName = nodes.colorName;
             DataStorage.displayHeightAndWidth = nodes.displayHeightAndWidth;
@@ -417,6 +417,23 @@ module powerbi.extensibility.visual {
             viewModel.highlights = viewModel.dataPoints.filter(d => d.highlighted).length > 0;
 
             return viewModel;
+        }
+    }
+
+    export function logExceptions(): MethodDecorator {
+        return function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>)
+            : TypedPropertyDescriptor<any> {
+
+            return {
+                value: function () {
+                    try {
+                        return descriptor.value.apply(this, arguments);
+                    } catch (e) {
+                        console.error(e);
+                        throw e;
+                    }
+                }
+            }
         }
     }
 }

@@ -74,9 +74,9 @@ module powerbi.extensibility.visual {
 
     //Determine the color of the element by grounds of belonging to a team
     public colorDefinitionByCommand(newModel: ViewModel, index, listTeams: TeamModelList): string[] {
-        let colorA: any;
-        let colorB: any;
-        let colors: string[];
+        let colorA;
+        let colorB;
+        let colors = [];
         
         for (let i = 0; i < listTeams.teamAModel.length; i++) {
             if (newModel.dataPoints[index].teamA === listTeams.teamAModel[i].team) {
@@ -84,11 +84,11 @@ module powerbi.extensibility.visual {
             }
         }
 
-        // for (let i = 0; i < listTeams.teamBModel.length; i++) {
-        //     if (newModel.dataPoints[index].teamB === listTeams.teamBModel[i].team) {
-        //         colorB = listTeams.teamBModel[i].color;
-        //     }
-        // }
+        for (let i = 0; i < listTeams.teamBModel.length; i++) {
+            if (newModel.dataPoints[index].teamB === listTeams.teamBModel[i].team) {
+                colorB = listTeams.teamBModel[i].color;
+            }
+        }
 
         colors.push(colorA);
         colors.push(colorB);
