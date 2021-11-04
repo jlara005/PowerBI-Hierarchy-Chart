@@ -206,6 +206,24 @@ module powerbi.extensibility.visual {
                     }
                 }
             }
+
+            for (let i = 0; i < listTeams.teamBModel.length; i++) {
+                if ((listTeams.teamBModel[i].team != null) && (listTeams.teamBModel[i].team != " ") && (listTeams.teamBModel[i].team != "")) {
+
+                    let color = listTeams.teamBModel[i].color;
+                    if (i < (listTeams.teamBModel.length / 2)) {
+                        this.drawingBorderColorMarks(xCircleCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
+                        this.drawingTextMarksAuto(xCircleCoordinate + radius * 2, yCircleCoordinate, listTeams, true, i, newModel);
+                        yCircleCoordinate = yCircleCoordinate + radius * 2.5;
+                    }
+                    else {
+                        xCircleCoordinate = widthWindow - radius * 1.2;
+                        this.drawingBorderColorMarks(xCircleCoordinate, yCircleCoordinateForTheSecondHalf, radius, color, listTeams, i, newModel);
+                        this.drawingTextMarksAuto(DataStorage.visualWindowWidth - radius * 3, yCircleCoordinateForTheSecondHalf, listTeams, false, i, newModel);
+                        yCircleCoordinateForTheSecondHalf = yCircleCoordinateForTheSecondHalf + radius * 2.5;
+                    }
+                }
+            }
         }
 
         //drawing of a legend in the upper and lower position
@@ -230,7 +248,6 @@ module powerbi.extensibility.visual {
             }
             DrawControlPanel.displayScroll = false;
             for (let i = DataStorage.scrollLeft; i < DataStorage.scrollRight; i++) {
-
                 if ((listTeams.teamAModel[i].team != null) && (listTeams.teamAModel[i].team != " ") && (listTeams.teamAModel[i].team != "")) {
                     let color = listTeams.teamAModel[i].color;
                     if (i < listTeams.teamAModel.length) {
@@ -241,7 +258,22 @@ module powerbi.extensibility.visual {
                         xCoordinate = xCoordinate + team.length * 4 * DataStorage.fontLegendSize / 5 + 7;
                     }
                     if ((xCoordinate < DataStorage.visualWindowWidth - 50) && (DataStorage.scrollRight < listTeams.teamAModel.length)) {
-
+                        DataStorage.scrollRight++;
+                    }
+                    if ((xCoordinate > DataStorage.visualWindowWidth - 50)) {
+                        DrawControlPanel.displayScroll = true;
+                    }
+                }
+                if ((listTeams.teamBModel[i].team != null) && (listTeams.teamBModel[i].team != " ") && (listTeams.teamBModel[i].team != "")) {
+                    let color = listTeams.teamBModel[i].color;
+                    if (i < listTeams.teamBModel.length) {
+                        this.drawingBorderColorMarks(xCoordinate, yCircleCoordinate, radius, color, listTeams, i, newModel);
+                        xCoordinate = xCoordinate + radius * 2;
+                        let team = listTeams.teamBModel[i].team.toString();
+                        this.drawingTextMarks(xCoordinate, yCircleCoordinate, team, radius, false, listTeams, i, newModel);
+                        xCoordinate = xCoordinate + team.length * 4 * DataStorage.fontLegendSize / 5 + 7;
+                    }
+                    if ((xCoordinate < DataStorage.visualWindowWidth - 50) && (DataStorage.scrollRight < listTeams.teamBModel.length)) {
                         DataStorage.scrollRight++;
                     }
                     if ((xCoordinate > DataStorage.visualWindowWidth - 50)) {
@@ -267,6 +299,30 @@ module powerbi.extensibility.visual {
                 .style("fill", color)
                 .style("stroke", "black")
                 .style("stroke-width", 1)
+                .attr({
+                    r: radius,
+                    cx: xCircleCoordinate,
+                    cy: yCircleCoordinate
+                })
+                .on("click", () => {
+                    if((d3.event as MouseEvent).ctrlKey){
+                        this.selectMultipleEventLegend(listTeams, i, newModel)
+                    } else{
+                        this.selectSingleEvent(i, listTeams, newModel);
+                    }
+                });
+        }
+
+        //circles on the legend
+        public drawingBorderColorMarks(xCircleCoordinate, yCircleCoordinate, radius, color, listTeams: TeamModelList, i, newModel) {
+
+            DataStorage.circle = DataStorage.barGroup.append("circle")
+                .classed('circle', true).classed("team" + listTeams.teamBModel[i].teamId, true).classed("controlPanel", true);
+
+            DataStorage.circle
+                .style("fill", "white")
+                .style("stroke", color)
+                .style("stroke-width", 2)
                 .attr({
                     r: radius,
                     cx: xCircleCoordinate,
