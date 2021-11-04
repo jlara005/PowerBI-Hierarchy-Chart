@@ -75,7 +75,7 @@ module powerbi.extensibility.visual {
                         let colors = calculationsForDrawing.colorDefinitionByCommand(newModel, i, listTeams);
                         if (DataStorage.shapeType) {
                             this.drawingEllipse(xCenterCoordinate, yCenterCoordinate, heightOfTheShape,
-                                widthOfTheShape, newModel, listTeams, colors[0], i);
+                                widthOfTheShape, newModel, listTeams, colors[0], colors[1], i);
                         } else {
                             this.drawingRectangle(xCenterCoordinate, yCenterCoordinate, heightOfTheShape,
                                 widthOfTheShape, newModel, listTeams, colors[0], colors[1], i);
@@ -185,7 +185,8 @@ module powerbi.extensibility.visual {
             widthOfTheShape,
             newModel: ViewModel,
             listTeams: TeamModelList,
-            color,
+            colorA,
+            colorB,
             i
         ) {
             let calculationsForDrawing: CalculationsForDrawing = new CalculationsForDrawing();
@@ -205,9 +206,9 @@ module powerbi.extensibility.visual {
             DataStorage.rectangle = DataStorage.barGroup.append("ellipse")
                 .classed('rectangle', true).classed("team" + teamId, true).classed("id" + newModel.dataPoints[i].id, true);
             DataStorage.rectangle
-                .style("fill", color)
+                .style("fill", colorA)
                 .style("opacity", transparency)
-                .style("stroke", "black")
+                .style("stroke", colorB)
                 .style("stroke-width", 2)
                 .attr({
                     cx: xCenterCoordinate,
