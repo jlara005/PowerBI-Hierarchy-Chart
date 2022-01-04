@@ -250,7 +250,8 @@ module powerbi.extensibility.visual {
             elementWeight: 0,
             parentStartX: 0,
             nameOfHeader: "",
-            tooltip: ""
+            tooltip: "",
+            footer: ""
         };
         let cashPoint: DataPoint;
         let sortModel: ViewModel = {

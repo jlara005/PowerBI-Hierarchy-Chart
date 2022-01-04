@@ -25,6 +25,7 @@ module powerbi.extensibility.visual {
         parentStartX: number;
         nameOfHeader: string;
         tooltip: string;
+        footer: string;
     };
 
     export interface ViewModel {
@@ -59,5 +60,6 @@ module powerbi.extensibility.visual {
         teamB?: number;
         position?: number;
         tooltip?: number;
+        footer?: number;
     }
 }    

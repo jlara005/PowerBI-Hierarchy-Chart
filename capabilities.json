@@ -17,6 +17,11 @@
             "kind": "Grouping"
         },
         {
+            "displayName": "Footer",
+            "name": "footer",
+            "kind": "Grouping"
+        },
+        {
             "displayName": "Parent",
             "name": "reportTo",
             "kind": "Grouping"
@@ -55,6 +60,10 @@
                         "max": 1
                     },
                     "position": {
+                        "min": 0,
+                        "max": 1
+                    },
+                    "footer": {
                         "min": 0,
                         "max": 1
                     },
@@ -100,6 +109,11 @@
                         {
                             "bind": {
                                 "to": "position"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "footer"
                             }
                         },
                         {

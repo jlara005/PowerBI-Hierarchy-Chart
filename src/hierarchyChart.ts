@@ -279,6 +279,7 @@ module powerbi.extensibility.visual {
                 teamB: -1,
                 position: -1,
                 tooltip: -1,
+                footer: -1,
             };
 
             dataView.categorical.categories.forEach((column: DataViewCategoryColumn, columnIndex: number) => {
@@ -302,6 +303,7 @@ module powerbi.extensibility.visual {
                 }
                 const title: string = categories[columnIndexes.title].values[dataPointIndex] as string;
                 const reportTo: string = categories[columnIndexes.reportTo].values[dataPointIndex] as string;
+                const footer: string = categories[columnIndexes.footer].values[dataPointIndex] as string;
                 const lvl: number = 0 as number;
                 const xCoordinate: number = 0 as number;
                 const yCoordinate: number = 0 as number;
@@ -411,7 +413,8 @@ module powerbi.extensibility.visual {
                     nameOfHeader,
                     tooltip,
                     teamB,
-                    teamBId
+                    teamBId,
+                    footer
                 });
             }
             viewModel.highlights = viewModel.dataPoints.filter(d => d.highlighted).length > 0;

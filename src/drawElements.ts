@@ -95,6 +95,10 @@ module powerbi.extensibility.visual {
                             offsetValue, listTeams, numberOfVisibleLevels,
                             newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
 
+                        this.drawingFooter(xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue,
+                            offsetValue, listTeams, numberOfVisibleLevels,
+                            newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
+
                         newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
                         newModel.dataPoints[i].yCoordinate = yCenterCoordinate;
                     }
@@ -562,6 +566,131 @@ module powerbi.extensibility.visual {
                         "text-anchor": "middle"
                     })
                     .text(newModel.dataPoints[i].position)
+                    .style("width",  widthOfTheShape + "px")
+                    .style("height", heightOfTheShape / 2 + "px")
+                    .style("font-size", DataStorage.customFontSizeTitle + "px")
+                    .style("line-height", DataStorage.customFontSizeTitle + "px")
+                    .style("fill", DataStorage.colorName)
+                    .style("writing-mode", writingMode)
+
+                    .on("click", () => {
+                        if((d3.event as MouseEvent).ctrlKey){
+                            this.selectMultipleEvent(newModel, i, listTeams);
+                        } else{
+                            this.selectSingleEvent(newModel,i, listTeams);
+                        }
+                    })
+
+                    // event for tooltip
+                    .on("mouseover", () => {
+                        this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                            xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+                    })
+                    .on("mouseout", function() {
+                        DataStorage.barGroup
+                            .selectAll(".toolTip")
+                            .remove();
+                        DataStorage.barGroup
+                            .selectAll(".toolTipWindow")
+                            .remove();
+                    });
+            }
+        }
+
+        public drawingFooter(
+            xCenterCoordinate,
+            yCenterCoordinate,
+            newModel: ViewModel,
+            i,
+            fontSizeValue,
+            offsetValue,
+            listTeams: TeamModelList,
+            numberOfVisibleLevels,
+            lvl,
+            isHeightGreaterThanWidth,
+            heightOfTheShape,
+            widthOfTheShape
+        ) {
+            let writingMode;
+            let xCoordinate;
+            let yCoordinate;
+            if (isHeightGreaterThanWidth && !DataStorage.showWraps) {
+                writingMode = "tb";
+                xCoordinate = xCenterCoordinate - widthOfTheShape / 4;
+                yCoordinate = navigator.userAgent.search(/Edge/) > 0 ||
+                navigator.userAgent.search(/Firefox/) > 0 ||
+                navigator.userAgent.search(/.NET/) > 0 ?
+                    yCenterCoordinate - heightOfTheShape / 2 - offsetValue:
+                    yCenterCoordinate - heightOfTheShape / 2;
+            }
+            else if (isHeightGreaterThanWidth && DataStorage.showWraps) {
+                writingMode = "vertical-rl";
+                xCoordinate = xCenterCoordinate - widthOfTheShape / 4;
+                yCoordinate = yCenterCoordinate - heightOfTheShape / 2 - offsetValue / 4;
+            }
+            else {
+                writingMode = "bt";
+                xCoordinate = xCenterCoordinate;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue * 3.5;
+            }
+
+            if(DataStorage.showWraps){
+                DataStorage.subtitleTextValue = DataStorage.barGroup.append("foreignObject")
+                    .classed("subtitleTextValue", true)
+                    .style("overflow", "visible")
+                    .attr("width",  widthOfTheShape + "px")
+                    .attr("height", heightOfTheShape / 2 + "px");
+                DataStorage.subtitleTextValue
+                    .attr({
+                        x: isHeightGreaterThanWidth ? xCoordinate - widthOfTheShape / 4 + offsetValue / 2 : xCoordinate - widthOfTheShape / 2,
+                        y: isHeightGreaterThanWidth ? yCoordinate - heightOfTheShape / 2 : yCoordinate - heightOfTheShape / 4 - offsetValue,
+                        "text-anchor": "middle"
+                    })
+                    .append("xhtml:body")
+                    .classed("in-block", true)
+                    .text(newModel.dataPoints[i].footer)
+                    .classed("foreign-body-row", true)
+                    .style("width",  isHeightGreaterThanWidth ? widthOfTheShape / 2 + "px" : widthOfTheShape + "px")
+                    .style("height", isHeightGreaterThanWidth ? heightOfTheShape + "px" : heightOfTheShape / 2 + "px")
+                    .style("font-size", DataStorage.customFontSizeTitle + "px")
+                    .style("line-height", DataStorage.customFontSizeTitle + "px")
+                    .style("fill", DataStorage.colorName)
+                    .style("writing-mode", writingMode)
+
+                    .on("click", () => {
+                        if((d3.event as MouseEvent).ctrlKey){
+                            this.selectMultipleEvent(newModel, i, listTeams);
+                        } else{
+                            this.selectSingleEvent(newModel,i, listTeams);
+                        }
+                    })
+
+                    // event for tooltip
+                    .on("mouseover", () => {
+                        this.calculationCoordinatesForTooltipDrawing(newModel, i, listTeams,
+                            xCenterCoordinate, yCenterCoordinate, widthOfTheShape, heightOfTheShape);
+                    })
+                    .on("mouseout", function() {
+                        DataStorage.barGroup
+                            .selectAll(".toolTip")
+                            .remove();
+                        DataStorage.barGroup
+                            .selectAll(".toolTipWindow")
+                            .remove();
+                    });
+            }
+            else {
+                DataStorage.nameTextValue = DataStorage.barGroup.append("text")
+                    .classed("nameTextValue", true)
+                    .style("width",  widthOfTheShape + "px")
+                    .style("height", heightOfTheShape + "px");
+                DataStorage.nameTextValue
+                    .attr({
+                        x: isHeightGreaterThanWidth ? xCoordinate + offsetValue / 2 : xCoordinate,
+                        y: isHeightGreaterThanWidth ? yCoordinate + offsetValue : yCoordinate,
+                        "text-anchor": "middle"
+                    })
+                    .text(newModel.dataPoints[i].footer)
                     .style("width",  widthOfTheShape + "px")
                     .style("height", heightOfTheShape / 2 + "px")
                     .style("font-size", DataStorage.customFontSizeTitle + "px")
