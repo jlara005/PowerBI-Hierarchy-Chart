@@ -62,7 +62,6 @@ module powerbi.extensibility.visual {
                 this.settings.wrap.show = false;
             }
 
-
             viewModel.dataPoints = viewModel.dataPoints.sort(this.sortIndication);
             DataStorage.visualWindowWidth = options.viewport.width;
             DataStorage.visualWindowHeight = options.viewport.height;
@@ -97,6 +96,8 @@ module powerbi.extensibility.visual {
             DataStorage.showWarning = warning.show;
             DataStorage.showTooltip = tooltip.show;
             DataStorage.showWraps = wrap.show;
+            DataStorage.orgView = nodes.orgView;
+            DataStorage.textAlignment = nodes.textAlignment;
             // DataStorage.showWraps = `\v`===`v` ? false : wrap.show;
 
             let drawElements: DrawElements = new DrawElements();

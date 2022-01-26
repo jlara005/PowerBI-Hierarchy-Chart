@@ -95,9 +95,12 @@ module powerbi.extensibility.visual {
                             offsetValue, listTeams, numberOfVisibleLevels,
                             newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
 
-                        this.drawingFooter(xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue,
-                            offsetValue, listTeams, numberOfVisibleLevels,
-                            newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
+                        if(!isHeightGreaterThanWidth)
+                        {
+                            this.drawingFooter(xCenterCoordinate, yCenterCoordinate, newModel, i, fontSizeValue,
+                                offsetValue, listTeams, numberOfVisibleLevels,
+                                newModel.dataPoints[i].lvl, isHeightGreaterThanWidth, heightOfTheShape, widthOfTheShape);
+                        }
 
                         newModel.dataPoints[i].xCoordinate = xCenterCoordinate;
                         newModel.dataPoints[i].yCoordinate = yCenterCoordinate;
@@ -631,7 +634,7 @@ module powerbi.extensibility.visual {
             else {
                 writingMode = "bt";
                 xCoordinate = xCenterCoordinate;
-                yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue * 3.5;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue * 4;
             }
 
             if(DataStorage.showWraps){

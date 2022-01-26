@@ -225,6 +225,13 @@
                         "bool": true
                     }
                 },
+                "orgView": {
+                    "displayName": "Organization View",
+                    "displayNameKey": "Visual_Org_View",
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "displayHeightAndWidth": {
                     "displayName": "Display height and width",
                     "displayNameKey": "Visual_Display_Height_And_Width",
@@ -261,6 +268,15 @@
                     "type": {
                         "formatting": {
                             "fontSize": true
+                        }
+                    }
+                },
+                "textAlignment": {
+                    "displayName": "Text alignment",
+                    "displayNameKey": "Visual_Text_Alignment",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
                         }
                     }
                 },

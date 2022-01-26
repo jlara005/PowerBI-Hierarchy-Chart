@@ -17,7 +17,6 @@ module powerbi.extensibility.visual {
         public static warningText: d3.Selection<SVGElement>;
         public static img: d3.Selection<SVGElement>;
         public static backgroundWindow: d3.Selection<SVGElement>;
-
         public static toolTip: d3.Selection<SVGElement>;
         public static toolTipWindow: d3.Selection<SVGElement>;
 
@@ -45,7 +44,8 @@ module powerbi.extensibility.visual {
         public static showWarning: boolean;
         public static showTooltip: boolean;
         public static showWraps: boolean;
-
+        public static orgView: boolean;
+        public static textAlignment: string;
 
         //other variables
         public static isWarning: boolean = false;

@@ -25,6 +25,7 @@ module powerbi.extensibility.visual {
 
     export class NodesSettings {
         public show: boolean = false;
+        public orgView: boolean = false;
         public displayHeightAndWidth: boolean = false;
         public height: number = 100;
         public width: number = 40;
@@ -33,6 +34,7 @@ module powerbi.extensibility.visual {
         public colorName: string = "";
         public distanceBetweenTitleAndSubtitle: number = 5;
         public shape: boolean = false;
+        public textAlignment: string = "";
     }
 
     export class LegendSettings {
