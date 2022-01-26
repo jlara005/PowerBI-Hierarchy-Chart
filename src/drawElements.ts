@@ -381,7 +381,7 @@ module powerbi.extensibility.visual {
             else {
                 writingMode = "bt";
                 xCoordinate = xCenterCoordinate;
-                yCoordinate = yCenterCoordinate - fontSizeValue * 3 - offsetValue;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3 - offsetValue - 1;
             }
 
             if(DataStorage.showWraps){
@@ -506,7 +506,7 @@ module powerbi.extensibility.visual {
             else {
                 writingMode = "bt";
                 xCoordinate = xCenterCoordinate;
-                yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue;
+                yCoordinate = yCenterCoordinate - fontSizeValue * 3 + offsetValue - 3;
             }
 
             if(DataStorage.showWraps){
