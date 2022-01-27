@@ -271,15 +271,6 @@
                         }
                     }
                 },
-                "textAlignment": {
-                    "displayName": "Text alignment",
-                    "displayNameKey": "Visual_Text_Alignment",
-                    "type": {
-                        "formatting": {
-                            "alignment": true
-                        }
-                    }
-                },
                 "colorName": {
                     "displayName": "Font color",
                     "displayNameKey": "Visual_Color_Name",

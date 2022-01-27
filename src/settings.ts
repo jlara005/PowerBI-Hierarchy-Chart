@@ -34,7 +34,6 @@ module powerbi.extensibility.visual {
         public colorName: string = "";
         public distanceBetweenTitleAndSubtitle: number = 5;
         public shape: boolean = false;
-        public textAlignment: string = "";
     }
 
     export class LegendSettings {

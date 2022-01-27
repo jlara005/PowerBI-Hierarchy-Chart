@@ -97,7 +97,6 @@ module powerbi.extensibility.visual {
             DataStorage.showTooltip = tooltip.show;
             DataStorage.showWraps = wrap.show;
             DataStorage.orgView = nodes.orgView;
-            DataStorage.textAlignment = nodes.textAlignment;
             // DataStorage.showWraps = `\v`===`v` ? false : wrap.show;
 
             let drawElements: DrawElements = new DrawElements();
